@@ -12,7 +12,7 @@
 
  第一种方法是创建一个空的MultiTermVectorsRequest，然后向其中添加单独的TermVectorsRequest求。
 
-```
+```java
 MultiTermVectorsRequest request = new MultiTermVectorsRequest(); //创建一个空的MultiTermVectorsRequest。
 TermVectorsRequest tvrequest1 =
     new TermVectorsRequest("authors", "1");
@@ -28,7 +28,7 @@ request.add(tvrequest2); //将人工文档的第二个术语请求添加到多�
 
  当所有TermVectorsRequest共享相同的参数(如索引和其他设置)时，可以使用第二种方法。在这种情况下，可以创建一个模板TermVectorsRequest，并设置所有必要的设置，该模板请求可以与执行这些请求的所有文档id一起传递给MultiTermVectorsRequest。
 
-```
+```java
 TermVectorsRequest tvrequestTemplate =
     new TermVectorsRequest("authors", "fake_id"); //创建模板TermVectorsRequest。
 tvrequestTemplate.setFields("user");
@@ -41,7 +41,7 @@ MultiTermVectorsRequest request =
 
  当以下列方式执行MultiTermVectorsRequest时，客户端会在继续执行代码之前等待返回MultiTermVectorsResponse:
 
-```
+```java
 MultiTermVectorsResponse response =
     client.mtermvectors(request, RequestOptions.DEFAULT);
 ```
@@ -54,7 +54,7 @@ MultiTermVectorsResponse response =
 
  也可以异步方式执行MultiTermVectorsRequest，以便客户端可以直接返回。用户需要通过将请求和侦听器传递给异步MultiTermVectors方法来指定如何处理响应或潜在故障:
 
-```
+```java
 client.mtermvectorsAsync(
     request, RequestOptions.DEFAULT, listener);
 ```
@@ -63,7 +63,7 @@ client.mtermvectorsAsync(
 
  MultiTermVectors的典型监听器如下所示:
 
-```
+```java
 listener = new ActionListener<MultiTermVectorsResponse>() {
     @Override
     public void onResponse(MultiTermVectorsResponse mtvResponse) {
@@ -82,7 +82,7 @@ listener = new ActionListener<MultiTermVectorsResponse>() {
 
  MultiTermVectorsResponse允许获得TermVectorsResponse的列表，每个响应都可以按照Term Vectors API中的描述进行检查。
 
-```
+```java
 List<TermVectorsResponse> tvresponseList =
     response.getTermVectorsResponses(); //获取MultiTermVectorsResponse列表
 if (tvresponseList != null) {
@@ -90,3 +90,4 @@ if (tvresponseList != null) {
     }
 }
 ```
+

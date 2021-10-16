@@ -12,7 +12,7 @@
 
  使用GetRequest，就像获取应用程序接口一样。支持它的所有可选参数。由于exists()只返回true或false，我们建议关闭提取源和任何存储字段，这样消耗资源会少一些:
 
-```
+```java
 GetRequest getRequest = new GetRequest(
     "posts", //索引
     "1");    //文档id
@@ -24,7 +24,7 @@ getRequest.storedFields("_none_");
 
  当以下列方式执行GetRequest时，客户端在继续执行代码之前，会等待返回布尔值:
 
-```
+```java
 boolean exists = client.exists(getRequest, RequestOptions.DEFAULT);
 ```
 
@@ -36,7 +36,7 @@ boolean exists = client.exists(getRequest, RequestOptions.DEFAULT);
 
  执行GetRequest也可以异步方式完成，这样客户端就可以直接返回。用户需要通过向异步exists方法传递请求和侦听器来指定如何处理响应或潜在故障:
 
-```
+```java
 client.existsAsync(getRequest, RequestOptions.DEFAULT, listener); //要执行的GetRequest和执行完成时要使用的ActionListener
 ```
 
@@ -44,7 +44,7 @@ client.existsAsync(getRequest, RequestOptions.DEFAULT, listener); //要执行的
 
  一个典型的listener如下：
 
-```
+```java
 ActionListener<Boolean> listener = new ActionListener<Boolean>() {
     @Override
     public void onResponse(Boolean exists) {//执行成功的时候调用

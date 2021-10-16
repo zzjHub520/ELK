@@ -12,7 +12,7 @@
 
  ReindexRequest的最简单形式如下:
 
-```
+```java
 ReindexRequest request = new ReindexRequest(); //创建ReindexRequest
 request.setSourceIndices("source1", "source2"); //添加要从源中复制的列表
 request.setDestIndex("dest");  //添加目标索引
@@ -20,49 +20,49 @@ request.setDestIndex("dest");  //添加目标索引
 
  目标元素可以像索引API一样配置来控制乐观并发控制。忽略versionType(如上)或将其设置为内部将导致Elasticsearch盲目地将文档转储到目标中。将版本类型设置为外部将导致Elasticsearch保留源版本，创建任何丢失的文档，并更新目标索引中版本比源索引中版本旧的文档。
 
-```
+```java 
 request.setDestVersionType(VersionType.EXTERNAL); //设置versionType为EXTERNAL
 ```
 
  将opType设置为create导致_reindex仅在目标索引中创建丢失的文档。所有现有文档都将导致版本冲突。默认opType是index。
 
-```
+```java
 request.setDestOpType("create"); //设置versionType为create
 ```
 
  默认情况下，版本冲突会中止_reindex进程，但您可以用以下方法来计算它们:
 
-```
+```java
 request.setConflicts("proceed"); //设置版本冲突时继续
 ```
 
  您可以通过添加查询来限制文档。
 
-```
-request.setSourceQuery(new TermQueryBuilder("user", "kimchy")); /仅复制字段用户设置为kimchy的文档
+```java
+request.setSourceQuery(new TermQueryBuilder("user", "kimchy")); //仅复制字段用户设置为kimchy的文档
 ```
 
  也可以通过设置大小来限制已处理文档的数量。
 
-```
+```java
 request.setSize(10); //只拷贝10个文档
 ```
 
  默认情况下_reindex单次可以处理1000个文档。您可以使用sourceBatchSize更改批处理大小。
 
-```
+```java
 request.setSourceBatchSize(100); //单次处理100个文档
 ```
 
  Reindex还可以通过指定管道来使用摄取功能。
 
-```
+```java
 request.setDestPipeline("my_pipeline"); //设置管线为my_pipeline
 ```
 
  如果您想从源索引中获得一组特定的文档，您需要使用sort。如果可能的话，最好选择一个更有选择性的查询，而不是大小和排序。
 
-```
+```java
 request.addSortField("field1", SortOrder.DESC); //将降序排序添加到`field1`
 request.addSortField("field2", SortOrder.ASC); //将升序排序添加到field2
   ReindexRequest还支持修改文档的脚本。它还允许您更改文档的元数据。下面的例子说明了这一点。
@@ -75,7 +75,7 @@ request.setScript(
 
  ReindexRequest支持从远程Elasticsearch集群重新索引。当使用远程群集时，应该在RemoteInfo对象中指定查询，而不是使用setSourceQuery。如果同时设置了远程信息和源查询，则会在请求过程中导致验证错误。原因是远程Elasticsearch可能不理解现代查询构建器构建的查询。远程集群支持一直工作到Elasticsearch0.90，从那时起查询语言发生了变化。当达到旧版本时，用JSON手工编写查询更安全。
 
-```
+```java
 request.setRemoteInfo(
     new RemoteInfo(
         "http", remoteHost, remotePort, null,
@@ -89,13 +89,13 @@ request.setRemoteInfo(
 
  ReindexRequest也有助于使用切片滚动对_uid进行切片来自动并行化。使用设置切片指定要使用的切片数量。
 
-```
+```java
 request.setSlices(2); //设置使用的切片数
 ```
 
  ReindexRequest使用Scroll参数来控制它保持“搜索上下文”活动的时间。
 
-```
+```java
 request.setScroll(TimeValue.timeValueMinutes(10)); //设置滚动时间
 ```
 
@@ -103,7 +103,7 @@ request.setScroll(TimeValue.timeValueMinutes(10)); //设置滚动时间
 
  除了上述选项之外，还可以选择提供以下参数:
 
-```
+```java
 request.setTimeout(TimeValue.timeValueMinutes(2)); //等待重新索引请求作为时间值执行的超时
 request.setRefresh(true); //调用reindex后刷新索引
 ```
@@ -112,7 +112,7 @@ request.setRefresh(true); //调用reindex后刷新索引
 
  当以下列方式执行ReindexRequest时，客户端在继续执行代码之前，会等待返回BulkByScrollResponse:
 
-```
+```java
 BulkByScrollResponse bulkResponse =
         client.reindex(request, RequestOptions.DEFAULT);
 ```
@@ -125,7 +125,7 @@ BulkByScrollResponse bulkResponse =
 
  执行ReindexRequest也可以异步方式完成，以便客户端可以直接返回。用户需要通过将请求和侦听器传递给异步reindex方法来指定如何处理响应或潜在故障:
 
-```
+```java
 client.reindexAsync(request, RequestOptions.DEFAULT, listener); //要执行的ReindexRequest和执行完成时要使用的ActionListener
 ```
 
@@ -133,7 +133,7 @@ client.reindexAsync(request, RequestOptions.DEFAULT, listener); //要执行的Re
 
  reindex的典型侦听器如下:
 
-```
+```java
 listener = new ActionListener<BulkByScrollResponse>() {
     @Override
     public void onResponse(BulkByScrollResponse bulkResponse) {
@@ -150,7 +150,7 @@ listener = new ActionListener<BulkByScrollResponse>() {
 
  也可以使用Task API提交一个eindexRequest，而不是等待它完成。这相当于将等待完成标志设置为false的REST请求。
 
-```
+```java
 ReindexRequest reindexRequest = new ReindexRequest(); //ReindexRequest的构造方式与同步方法相同
 reindexRequest.setSourceIndices(sourceIndex);
 reindexRequest.setDestIndex(destinationIndex);
@@ -163,7 +163,7 @@ ReindexResponse
 
  返回的BulkByScrollResponse包含有关已执行操作的信息，并允许迭代每个结果，如下所示:
 
-```
+```java
 TimeValue timeTaken = bulkResponse.getTook(); //获取总时间
 boolean timedOut = bulkResponse.isTimedOut(); //检查请求是否超时
 long totalDocs = bulkResponse.getTotal(); //获取处理的文档总数

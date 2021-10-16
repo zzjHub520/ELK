@@ -8,7 +8,7 @@
 
  想要删除一个文档，必须构建一个DeleteRquest，如下：
 
-```
+```java
 DeleteRequest request = new DeleteRequest(
         "posts",    //索引
         "1");       //文档id
@@ -18,7 +18,7 @@ DeleteRequest request = new DeleteRequest(
 
  DeleteRequest同样有一些可选参数：
 
-```
+```java
 request.routing("routing"); //路由值
 request.timeout(TimeValue.timeValueMinutes(2)); //以TimeValue形式设置超时
 request.timeout("2m");  //以字符串形式设置超时
@@ -32,7 +32,7 @@ request.versionType(VersionType.EXTERNAL); //版本类型
 
  当以下列方式执行删除请求时，客户端在继续执行代码之前，会等待返回删除响应:
 
-```
+```java
 DeleteResponse deleteResponse = client.delete(
         request, RequestOptions.DEFAULT);
 ```
@@ -45,7 +45,7 @@ DeleteResponse deleteResponse = client.delete(
 
  也可以异步方式执行DeleteRequest，以便客户端可以直接返回而无需等待。用户需要通过向异步删除方法传递请求和侦听器来指定如何处理响应或潜在问题:
 
-```
+```java
 client.deleteAsync(request, RequestOptions.DEFAULT, listener); //要执行的删除请求和执行完成时要使用的操作侦听器
 ```
 
@@ -53,7 +53,7 @@ client.deleteAsync(request, RequestOptions.DEFAULT, listener); //要执行的删
 
  一个典型的监听器如下：
 
-```
+```java
 listener = new ActionListener<DeleteResponse>() {
     @Override
     public void onResponse(DeleteResponse deleteResponse) {
@@ -71,7 +71,7 @@ listener = new ActionListener<DeleteResponse>() {
 
  返回的DeleteResponse允许检索关于已执行操作的信息，如下所示:
 
-```
+```java
 String index = deleteResponse.getIndex();
 String id = deleteResponse.getId();
 long version = deleteResponse.getVersion();
@@ -89,7 +89,7 @@ if (shardInfo.getFailed() > 0) {
 
  还可以检查文档是否被找到:
 
-```
+```java
 DeleteRequest request = new DeleteRequest("posts", "does_not_exist");
 DeleteResponse deleteResponse = client.delete(
         request, RequestOptions.DEFAULT);
@@ -100,7 +100,7 @@ if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
 
  如果存在版本冲突，将引发弹性响应异常:
 
-```
+```java
 try {
     DeleteResponse deleteResponse = client.delete(
         new DeleteRequest("posts", "1").setIfSeqNo(100).setIfPrimaryTerm(2),

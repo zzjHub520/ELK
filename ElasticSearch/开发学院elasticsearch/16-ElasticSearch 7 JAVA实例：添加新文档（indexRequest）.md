@@ -6,7 +6,7 @@
 
  添加新文档需要调用IndexRequest请求，可以直接传递json数据，如下:
 
-```
+```java
 IndexRequest request = new IndexRequest("posts"); //索引
 request.id("1"); //文档id
 String jsonString = "{" +
@@ -19,7 +19,7 @@ request.source(jsonString, XContentType.JSON); //以字符串形式提供的文�
 
  也可以使用Map作为参数，如下
 
-```
+```java
 Map<String, Object> jsonMap = new HashMap<>();
 jsonMap.put("user", "kimchy");
 jsonMap.put("postDate", new Date());
@@ -45,7 +45,7 @@ IndexRequest indexRequest = new IndexRequest("posts")
 
  直接用键值对对象构架数据。
 
-```
+```java 
 IndexRequest indexRequest = new IndexRequest("posts")
     .id("1")
     .source("user", "kimchy",
@@ -57,7 +57,7 @@ IndexRequest indexRequest = new IndexRequest("posts")
 
  以下是官方文档提供的可选参数。
 
-```
+```java
 request.routing("routing"); //路由值
 request.timeout(TimeValue.timeValueSeconds(1)); //设置超时
 request.timeout("1s"); ////以字符串形式设置超时时间
@@ -74,7 +74,7 @@ request.setPipeline("pipeline"); //索引文档之前要执行的摄取管道的
 
  当以下列方式执行IndexRequest时，客户端在继续执行代码之前，会等待返回索引响应:
 
-```
+```java
 IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 ```
 
@@ -86,7 +86,7 @@ IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 
  我们也可以用异步方式执行IndexRequest，以便客户端可以直接返回。用户需要通过向异步索引方法传递请求和侦听器来指定如何处理响应或潜在故障:
 
-```
+```java
 client.indexAsync(request, RequestOptions.DEFAULT, listener);// listener是执行完成时要使用的侦听器
 ```
 
@@ -94,7 +94,7 @@ client.indexAsync(request, RequestOptions.DEFAULT, listener);// listener是执�
 
  一个典型的listener像下面这样：
 
-```
+```java
 listener = new ActionListener<IndexResponse>() {
     @Override
     public void onResponse(IndexResponse indexResponse) {//执行成功的时候调用
@@ -112,7 +112,7 @@ listener = new ActionListener<IndexResponse>() {
 
  返回的IndexResponse对象允许检索关于已执行操作的信息，如下所示:
 
-```
+```java
 String index = indexResponse.getIndex();
 String id = indexResponse.getId();
 if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {//处理创建文档的情况
@@ -134,7 +134,7 @@ if (shardInfo.getFailed() > 0) {//处理潜在的故障
 
  如果存在版本冲突，将引发ElasticsearchException:
 
-```
+```java
 IndexRequest request = new IndexRequest("posts")
     .id("1")
     .source("field", "value")
@@ -151,7 +151,7 @@ try {
 
  如果opType被设置为创建并且已经存在具有相同索引和id的文档，也会发生同样的情况:
 
-```
+```java
 IndexRequest request = new IndexRequest("posts")
     .id("1")
     .source("field", "value")

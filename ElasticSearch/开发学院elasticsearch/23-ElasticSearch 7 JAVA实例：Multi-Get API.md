@@ -10,7 +10,7 @@
 
  MultiGetRequest的构造函数为空，你可以添加MultiGetRequest.Item到查询中。
 
-```
+```java
 MultiGetRequest request = new MultiGetRequest();
 request.add(new MultiGetRequest.Item(
     "index",         //索引
@@ -20,7 +20,7 @@ request.add(new MultiGetRequest.Item("index", "another_id")); //添加另一个�
 
 **可选参数**
 
-```
+```java
 request.add(new MultiGetRequest.Item("index", "example_id")
     .fetchSourceContext(FetchSourceContext.DO_NOT_FETCH_SOURCE));  //禁用源检索，默认情况下启用
 String[] includes = new String[] {"foo", "*r"};
@@ -55,7 +55,7 @@ request.refresh(true); //在检索文档之前执行刷新(默认false)
 
  当以下列方式执行多重网格请求时，客户端在继续执行代码之前，会等待多重网格响应返回:
 
-```
+```java
 MultiGetResponse response = client.mget(request, RequestOptions.DEFAULT);
 ```
 
@@ -67,7 +67,7 @@ MultiGetResponse response = client.mget(request, RequestOptions.DEFAULT);
 
  也可以异步方式执行MultiGetRequest，以便客户端可以直接返回。用户需要通过向异步多获取方法传递请求和侦听器来指定如何处理响应或潜在故障:
 
-```
+```java
 client.mgetAsync(request, RequestOptions.DEFAULT, listener); //要执行的多重请求和执行完成时要使用的操作侦听器
 ```
 
@@ -75,7 +75,7 @@ client.mgetAsync(request, RequestOptions.DEFAULT, listener); //要执行的多�
 
  典型的multi-get监听器如下所示:
 
-```
+```java
 listener = new ActionListener<MultiGetResponse>() {
     @Override
     public void onResponse(MultiGetResponse response) {
@@ -93,7 +93,7 @@ listener = new ActionListener<MultiGetResponse>() {
 
  返回的MultiGetResponse包含一个MultiGetItemResponse列表，按请求的顺序排列在GetResponse中。MultiGetResponse包含获取成功时的获取GetResponse或MultiGetResponse。失败则提示失败，成功看起来就像普通的GetResponse。
 
-```
+```java
 MultiGetItemResponse firstItem = response.getResponses()[0];
 assertNull(firstItem.getFailure()); //getFailure返回null意味着没有失败。
 GetResponse firstGet = firstItem.getResponse();//getResponse返回GetResponse。
@@ -111,7 +111,7 @@ if (firstGet.isExists()) {
 
  当对不存在的索引执行的子请求之一getFailure将包含异常:
 
-```
+```java
 assertNull(missingIndexItem.getResponse());//getResponse为空。
 Exception e = missingIndexItem.getFailure().getFailure();//getFailure不是并且包含异常。
 ElasticsearchException ee = (ElasticsearchException) e; //  这个异常是一个ElasticsearchException
@@ -123,7 +123,7 @@ assertThat(e.getMessage(),
 
  如果请求了特定的文档版本，并且现有文档具有不同的版本号，则会引发版本冲突: 
 
-```
+```java
 MultiGetRequest request = new MultiGetRequest();
 request.add(new MultiGetRequest.Item("index", "example_id")
     .version(1000L));

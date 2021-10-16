@@ -12,7 +12,7 @@
 
  更新查询的最简单形式如下:
 
-```
+```java
 UpdateByQueryRequest request =
         new UpdateByQueryRequest("source1", "source2"); //在一组索引上创建UpdateByQueryRequest。
 ```

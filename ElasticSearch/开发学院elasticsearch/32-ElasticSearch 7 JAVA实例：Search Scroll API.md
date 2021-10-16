@@ -12,7 +12,7 @@
 
  必须执行带有scroll参数的初始搜索请求，以通过Search API初始化scroll会话。处理此搜索请求时，Elasticsearch会检测scroll参数的存在，并在相应的时间间隔内保持搜索上下文有效。
 
-```
+```java
 SearchRequest searchRequest = new SearchRequest("posts");
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 searchSourceBuilder.query(matchQuery("title", "Elasticsearch"));
@@ -28,7 +28,7 @@ SearchHits hits = searchResponse.getHits();  //检索第一批搜索命中
 
  第二步，接收到的scroll标识符必须设置为SearchScrollRequest以及新的scroll间隔，并通过searchScroll方法发送。Elasticsearch返回另一批带有新scroll标识符的结果。然后，这个新的scroll标识符可以在后续的SearchScrollRequest中使用，以检索下一批结果，依此类推。这个过程应该在一个循环中重复，直到不再返回结果，这意味着scroll已经用尽，并且所有匹配的文档已经被检索到。
 
-```
+```java
 SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId); //通过设置所需的scroll id和scroll间隔来创建搜索scroll请求
 scrollRequest.scroll(TimeValue.timeValueSeconds(30));
 SearchResponse searchScrollResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
@@ -47,7 +47,7 @@ assertNotNull(scrollId);
 
  构造搜索请求时，可以选择提供以下参数:
 
-```
+```java
 scrollRequest.scroll(TimeValue.timeValueSeconds(60L)); //滚动时间间隔
 scrollRequest.scroll("60s"); //以字符串形式滚动间隔
 ```
@@ -56,7 +56,7 @@ scrollRequest.scroll("60s"); //以字符串形式滚动间隔
 
 **同步执行**
 
-```
+```java
 SearchResponse searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
 ```
 
@@ -64,7 +64,7 @@ SearchResponse searchResponse = client.scroll(scrollRequest, RequestOptions.DEFA
 
  SearchScrollRequest的异步执行要求将搜索滚动请求实例和操作侦听器实例都传递给异步方法:
 
-```
+```java
 client.scrollAsync(scrollRequest, RequestOptions.DEFAULT, scrollListener); //要执行的搜索请求和执行完成时要使用的操作侦听器
 ```
 
@@ -72,7 +72,7 @@ client.scrollAsync(scrollRequest, RequestOptions.DEFAULT, scrollListener); //要
 
  搜索响应的典型侦听器如下:
 
-```
+```java
 ActionListener<SearchResponse> scrollListener =
         new ActionListener<SearchResponse>() {
     @Override
@@ -93,7 +93,7 @@ ActionListener<SearchResponse> scrollListener =
 
 **完整的例子**
 
-```
+```java
 final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
 SearchRequest searchRequest = new SearchRequest("posts");
 searchRequest.scroll(scroll);

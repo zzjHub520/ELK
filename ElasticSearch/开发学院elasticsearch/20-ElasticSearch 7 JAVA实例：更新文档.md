@@ -6,7 +6,7 @@
 
 **UpdateRequest**
 
-```
+```java
 UpdateRequest request = new UpdateRequest(
         "posts", //索引
         "1");   //文档id
@@ -18,7 +18,7 @@ UpdateRequest request = new UpdateRequest(
 
  该脚本可以作为内嵌脚本提供:
 
-```
+```java
 Map<String, Object> parameters = singletonMap("count", 4); //作为对象映射提供的脚本参数
 Script inline = new Script(ScriptType.INLINE, "painless",
         "ctx._source.field += params.count", parameters);  //使用painless语言和前面的参数创建内嵌脚本
@@ -27,7 +27,7 @@ request.script(inline);  //将脚本设置为更新请求
 
  或者作为存储的脚本:
 
-```
+```java
 Script stored = new Script(
         ScriptType.STORED, null, "increment-field", parameters);  //引用painless语言中存储在名称增量字段下的脚本
 request.script(stored);  //在更新请求中设置脚本
@@ -39,7 +39,7 @@ request.script(stored);  //在更新请求中设置脚本
 
  部分文档可以以不同的方式提供:
 
-```
+```java
 UpdateRequest request = new UpdateRequest("posts", "1");
 String jsonString = "{" +
         "\"updated\":\"2017-01-01\"," +
@@ -71,7 +71,7 @@ UpdateRequest request = new UpdateRequest("posts", "1")
 
  如果文档尚不存在，可以使用upsert方法定义一些将作为新文档插入的内容:
 
-```
+```java
 String jsonString = "{\"created\":\"2017-01-01\"}";
 request.upsert(jsonString, XContentType.JSON);  //以字符串形式提供的Upsert文档源
 ```
@@ -80,7 +80,7 @@ request.upsert(jsonString, XContentType.JSON);  //以字符串形式提供的Ups
 
 **可选参数**
 
-```
+```java
 request.routing("routing"); //路由值
 request.timeout(TimeValue.timeValueSeconds(1)); //设置超时
 request.timeout("1s"); ////以字符串形式设置超时时间
@@ -110,7 +110,7 @@ request.waitForActiveShards(ActiveShardCount.ALL); //ActiveShardCount的碎片�
 
  当以下列方式执行更新请求时，客户端在继续执行代码之前，会等待返回更新响应:
 
-```
+```java
 UpdateResponse updateResponse = client.update(
         request, RequestOptions.DEFAULT);
 ```
@@ -123,7 +123,7 @@ UpdateResponse updateResponse = client.update(
 
  执行更新请求也可以异步方式完成，以便客户端可以直接返回。用户需要通过向异步更新方法传递请求和侦听器来指定如何处理响应或潜在故障:
 
-```
+```java
 client.updateAsync(request, RequestOptions.DEFAULT, listener); //要执行的更新请求和执行完成时要使用的操作侦听器
 ```
 
@@ -131,7 +131,7 @@ client.updateAsync(request, RequestOptions.DEFAULT, listener); //要执行的更
 
  典型的更新监听器如下所示:
 
-```
+```java
 listener = new ActionListener<UpdateResponse>() {
     @Override
     public void onResponse(UpdateResponse updateResponse) {
@@ -149,7 +149,7 @@ listener = new ActionListener<UpdateResponse>() {
 
  返回的更新响应允许检索关于已执行操作的信息，如下所示:
 
-```
+```java
 String index = updateResponse.getIndex();
 String id = updateResponse.getId();
 long version = updateResponse.getVersion();
@@ -166,7 +166,7 @@ if (updateResponse.getResult() == DocWriteResponse.Result.CREATED) {
 
  当通过fetchSource方法在更新请求中启用源检索时，响应包含更新文档的源:
 
-```
+```java
 GetResult result = updateResponse.getGetResult(); //以GetResult形式检索更新的文档
 if (result.isExists()) {
     String sourceAsString = result.sourceAsString(); //以字符串形式检索更新文档的来源
@@ -179,7 +179,7 @@ if (result.isExists()) {
 
  也可以检查碎片故障:
 
-```
+```java
 ReplicationResponse.ShardInfo shardInfo = updateResponse.getShardInfo();
 if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
     //处理成功碎片数少于总碎片数的情况
@@ -194,7 +194,7 @@ if (shardInfo.getFailed() > 0) {
 
  当对不存在的文档执行UpdateRequest时，响应有404个状态代码，会引发一个ElasticsearchException，需要如下处理:
 
-```
+```java
 UpdateRequest request = new UpdateRequest("posts", "does_not_exist")
         .doc("field", "value");
 try {
@@ -209,7 +209,7 @@ try {
 
  如果存在版本冲突，将引发ElasticsearchException:
 
-```
+```java
 UpdateRequest request = new UpdateRequest("posts", "1")
         .doc("field", "value")
         .setIfSeqNo(101L)

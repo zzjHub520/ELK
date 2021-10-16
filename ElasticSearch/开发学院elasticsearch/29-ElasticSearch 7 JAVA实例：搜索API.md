@@ -10,7 +10,7 @@
 
  执行搜索时，它将被广播到所有索引/索引碎片(副本之间的循环)。可以通过提供路由参数来控制搜索哪些碎片。例如，索引tweets时，路由值可以是用户名:
 
-```
+```java
 POST /twitter/tweet?routing=kimchy
 {
     "user" : "kimchy",
@@ -21,7 +21,7 @@ POST /twitter/tweet?routing=kimchy
 
  在这种情况下，如果我们只想在tweets中搜索特定用户，我们可以将其指定为路由，导致搜索只命中相关碎片:
 
-```
+```java
 POST /twitter/tweet/_search?routing=kimchy
 {
     "query": {
@@ -45,7 +45,7 @@ POST /twitter/tweet/_search?routing=kimchy
 
  搜索可以与统计组相关联，统计组维护每个组的统计聚合。稍后可以特别使用索引统计应用编程接口来检索它。例如，这里有一个搜索主体请求，它将请求与两个不同的组相关联:
 
-```
+```java
 POST /_search
 {
     "query" : {
@@ -62,3 +62,6 @@ POST /_search
 **搜索取消**
 
  我们可以使用标准任务取消机制取消搜索。默认情况下，正在运行的搜索只检查它是否在段边界上被取消，因此取消可能会被较大的段延迟。通过将动态集群级设置search . low_level_cancel设置为true，可以提高搜索取消响应速度。然而，它伴随着更频繁的取消检查的额外开销，这在大型快速运行的搜索查询中是显而易见的。更改此设置只会影响更改后开始的搜索。
+
+
+
